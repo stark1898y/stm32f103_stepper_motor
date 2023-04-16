@@ -77,9 +77,9 @@ void test_elog(void)
 /*
 * 函数名称：Easylogger_Init
 * 输入参数：None
-* 返 回 值：None
-* 作    者：Barry
-* 功能描述：初始化Easylogger打印，配置log输出的颜色、字体、输出内容等
+* �? �? 值：None
+* �?    者：Barry
+* 功能描述：初始化Easylogger打印，配置log输出的颜色�?�字体�?�输出内容等
 * 修改记录：None
 */
 void Easylogger_Init(void)
@@ -90,7 +90,7 @@ void Easylogger_Init(void)
   /* 使能颜色输出 */
   elog_set_text_color_enabled(true);
 
-  /* 输出所有内容 */
+  /* 输出�?有内�? */
   elog_set_fmt(ELOG_LVL_ASSERT, ELOG_FMT_ALL);
 
   /* 输出日志级别信息和日志TAG */
@@ -98,15 +98,16 @@ void Easylogger_Init(void)
   elog_set_fmt(ELOG_LVL_WARN, ELOG_FMT_LVL | ELOG_FMT_TAG);
   elog_set_fmt(ELOG_LVL_INFO, ELOG_FMT_LVL | ELOG_FMT_TAG);
 
-  /* 除了时间、进程信息、线程信息之外，其余全部输出 */
+  /* 除了时间、进程信息�?�线程信息之外，其余全部输出 */
   elog_set_fmt(ELOG_LVL_DEBUG, ELOG_FMT_ALL & ~(ELOG_FMT_TIME | ELOG_FMT_P_INFO | ELOG_FMT_T_INFO));
 
-  /* 输出所有内容 */
+  /* 输出�?有内�? */
   elog_set_fmt(ELOG_LVL_VERBOSE, ELOG_FMT_ALL);
 
   /* 启动Easylogger */
   elog_start();
 }
+
 /* USER CODE END 0 */
 
 /**
@@ -146,6 +147,12 @@ int main(void)
 
   BSP_SteeperMotor_Init();
 
+  BSP_SteeperMotor_Start(&StepperMotor1, 2
+    , kMotorDirCw, kMotorModeStep, 4096);
+
+  BSP_SteeperMotor_Start(&StepperMotor2, 2
+    , kMotorDirAcw, kMotorModeLoop, 4096);
+
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -153,12 +160,35 @@ int main(void)
   while (1)
   {
     // for (uint8_t i = kBeatDa; i >= kBeatA; i--)
-    for (int8_t i = kBeatDa; i >= kBeatA; i--)
+    // for (int8_t i = kBeatDa; i >= kBeatA; i--)
     // for (int8_t i = 0; i <= 7; i++)
-    {
-      BSP_MotorBeat(&StepperMotor1, i);
-      HAL_Delay(1);
-    }
+    // {
+
+    //   BSP_MotorBeat(&StepperMotor1, (uint8_t)i);
+    //   HAL_Delay(10);
+      // BSP_MotorBeat(&StepperMotor1, kBeatAb);
+      // HAL_Delay(10);
+      // BSP_MotorBeat(&StepperMotor1, kBeatB);
+      // HAL_Delay(10);
+      // BSP_MotorBeat(&StepperMotor1, kBeatBc);
+      // HAL_Delay(10);
+      // BSP_MotorBeat(&StepperMotor1, kBeatC);
+      // HAL_Delay(10);
+      // BSP_MotorBeat(&StepperMotor1, kBeatCd);
+      // HAL_Delay(10);
+      // BSP_MotorBeat(&StepperMotor1, kBeatD);
+      // HAL_Delay(10);
+      // BSP_MotorBeat(&StepperMotor1, kBeatDa);
+      // HAL_Delay(10);
+
+    // }
+    // StepperMotorAction(&StepperMotor1);
+    // BSP_SteeperMotor_Loop();
+    // HAL_Delay(1);
+    BSP_SoftTimer_Loop();
+    // StepperMotorAction(&StepperMotor1);
+    // HAL_Delay(1);
+
 
     // test_elog();
     // printf("123\r\n");

@@ -10,7 +10,7 @@ uint64_t BSP_SoftTimer_GetTicks(void)
 
 void BSP_SoftTimer_Init(void)
 {
-
+    MultiTimerInstall(BSP_SoftTimer_GetTicks);
 }
 
 

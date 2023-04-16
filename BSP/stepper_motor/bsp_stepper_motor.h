@@ -2,7 +2,7 @@
  * @Author       : yzy
  * @Date         : 2023-04-15 22:11:50
  * @LastEditors  : yzy
- * @LastEditTime : 2023-04-16 01:02:33
+ * @LastEditTime : 2023-04-16 12:14:48
  * @FilePath     : \stm32f103_stepper_motor\BSP\stepper_motor\bsp_stepper_motor.h
  * @Description  :
  *
@@ -13,22 +13,27 @@
 
 #include "bsp_sys.h"
 
+// 启动频率是≥550，单位是P.P.S,即每秒脉冲数，这里的意思就是说：电机保证在你每秒给出550个
+// 步进脉冲的情况下，可以正常启动。那么换算成单节拍持续时间就是1s/550=1.8ms,为了让电机
+// 能够启动，我们控制节拍刷新时间大于1.8ms就可以了。
+#define MOTOR_TICK_TIME_MS (2u)
 // #define kMotorA_PIN
 typedef enum
 {
-	kMotorCw = 0U,       //  顺时针旋转
-	kMotorAcw       //  逆时针旋转
+	kMotorDirCw = 0U,       //  顺时针旋转
+	kMotorDirAcw       //  逆时针旋转
 } TeMotorDirection;
 
 typedef enum
 {
-	kMotorStop = 0U,
-    kMotorRun
+	kMotorCtrlStop = 0U,
+    kMotorCtrlRun
 } TeMotorControl;
 
-typedef enum {
-    kMotorLoop = 0U, //  一直旋转
-    kMotorStep       //  精准控制步数
+typedef enum
+{
+    kMotorModeLoop = 0U, //  一直旋转
+    kMotorModeStep       //  精准控制步数
 } TeMotorMode;
 
 typedef enum
@@ -56,7 +61,7 @@ typedef enum
     kBeatCd,
     kBeatD,
     kBeatDa,
-    kBeatOff
+    kBeatStop
 } TeMotorBeat;
 
 typedef struct
@@ -65,18 +70,28 @@ typedef struct
     uint16_t pin;
 } TsStepperMotorGpio;
 
-typedef struct
+typedef struct StepperMotorHandle TsStepperMotor;
+
+struct StepperMotorHandle
 {
-    uint8_t ticks;        //  定时器中的计数变量
-    uint8_t beat;         //  步进电机的控制节拍索引(0~7)
-    uint32_t step;        //  步进电机旋转相应的步数
+    TsStepperMotor* next;
+
+    uint8_t ticks;
+    uint8_t speed;
+    // uint8_t last_beat;    //  步进电机的控制节拍索引(0~7)
+    // uint8_t current_beat;    //  步进电机的控制节拍索引(0~7)
+    uint8_t beat;
+
     TeMotorControl control;   //  kMotorLoop:一直旋转  kMotorStep:精准控制步数
     TeMotorDirection dir;
     TeMotorMode mode;     //  kMotorSTOP/kMotorCW/kMotorCCW
-    TeMotorSpeed speed;   //  kMotorSPEED_LOW~kMotorSPEED_HIGH
+
+    uint16_t step;        //  步进电机旋转相应的步数
+
+    // TeMotorSpeed speed;   //  kMotorSPEED_LOW~kMotorSPEED_HIGH
 
     TsStepperMotorGpio Gpio[4];
-} TsStepperMotor;
+};
 
 // void (*MotorAction_Cb)(TsStepperMotor* pMotor, uint8_t beat);
 
@@ -102,6 +117,7 @@ typedef struct
 
 
 extern TsStepperMotor StepperMotor1;
+extern TsStepperMotor StepperMotor2;
 
 
 void BSP_SteeperMotor_InitGpio(TsStepperMotor* pMotor
@@ -110,9 +126,14 @@ void BSP_MotorBeat(TsStepperMotor* pMotor, TeMotorBeat beat);
 
 void BSP_SteeperMotor_Init(void);
 
+void BSP_SteeperMotor_Start(TsStepperMotor* pMotor, uint8_t speed
+    , TeMotorDirection dir, TeMotorMode mode, uint16_t step);
+void BSP_SteeperMotor_Stop(TsStepperMotor* pMotor);
+
+void BSP_SteeperMotor_Loop(void);
 
 
-
+void StepperMotorAction(TsStepperMotor* pMotor);
 
 
 #endif //!__STEPPER_kMotorH__
